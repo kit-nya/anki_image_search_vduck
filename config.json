@@ -1,4 +1,4 @@
 {
-    "query_field": "English",
-    "image_field": "Image"
+    "query_field": "Front",
+    "image_field": "Back"
 }

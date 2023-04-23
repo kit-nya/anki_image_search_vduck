@@ -1,9 +1,10 @@
 import os
 from os.path import dirname, abspath, realpath
-import urllib
 import importlib
 from tempfile import mkstemp
+from uuid import uuid4
 
+import requests
 from aqt import mw
 
 
@@ -19,28 +20,26 @@ def get_config():
 
 
 def get_note_query(note):
-    field_names = mw.col.models.fieldNames(note.model())
-
+    field_names = mw.col.models.field_names(note.note_type())
     query_field = field_names.index(get_config()["query_field"])
     return note.fields[query_field]
 
 
 def get_note_image_field_index(note):
-    field_names = mw.col.models.fieldNames(note.model())
-
+    field_names = mw.col.models.field_names(note.note_type())
     return field_names.index(get_config()["image_field"])
 
 
-def save_file_to_library(editor, image_url, prefix, suffix):
-    (i_file, temp_path) = mkstemp(prefix=prefix, suffix=suffix)
-
-    with urllib.request.urlopen(image_url) as response:
-        image_binary = response.read()
-
-    os.write(i_file, image_binary)
+def save_file_to_library(editor, image_url):
+    # Set a user agent to avoid 403 errors
+    headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/112.0"}
+    response = requests.get(image_url, headers=headers)
+    # Get file type from response
+    file_extension = response.headers["Content-Type"].split("/")[-1]
+    (i_file, temp_path) = mkstemp(prefix=str(uuid4()), suffix=file_extension)
+    os.write(i_file, response.content)
     os.close(i_file)
-
-    result_filename = editor.mw.col.media.addFile(temp_path)
+    result_filename = editor.mw.col.media.add_file(temp_path)
     try:
         os.unlink(temp_path)
     except:
@@ -48,26 +47,15 @@ def save_file_to_library(editor, image_url, prefix, suffix):
     return result_filename
 
 
-def save_image_to_library(editor, image_url):
-    if not image_url:
-        return
-    # parsing Yandex Images thumbnail url to get id
-    image_id = image_url.split("id=")[1].split("&")[0]
-    return save_file_to_library(editor, image_url, image_id, ".webp")
-
-
 def image_tag(image_url):
     attrs = {"src": image_url, "class": "imgsearch"}
-
     tag_components = ['{}="{}"'.format(key, val) for key, val in attrs.items()]
-
     return "<img " + " ".join(tag_components) + " />"
 
 
 def report(text):
     if importlib.util.find_spec("aqt"):
         from aqt.utils import showWarning
-
-        showWarning(text, title="Anki Image Search v2 Addon")
+        showWarning(text, title="Anki Image Search vDuck")
     else:
         print(text)

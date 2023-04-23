@@ -1,5 +1,4 @@
 from aqt import mw
-from aqt.utils import qconnect
 from aqt.qt import *
 
 from . import utils
@@ -7,7 +6,7 @@ from . import utils
 
 def settings_dialog():
     dialog = QDialog(mw)
-    dialog.setWindowTitle("Anki Image Search v2 Addon")
+    dialog.setWindowTitle("Anki Image Search vDuck")
 
     box_query = QHBoxLayout()
     label_query = QLabel("Query field:")
@@ -23,8 +22,8 @@ def settings_dialog():
     box_image.addWidget(label_image)
     box_image.addWidget(text_image)
 
-    ok = QDialogButtonBox(QDialogButtonBox.Ok)
-    cancel = QDialogButtonBox(QDialogButtonBox.Cancel)
+    ok = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
+    cancel = QDialogButtonBox(QDialogButtonBox.StandardButton.Cancel)
 
     def init_configui():
         config = utils.get_config()
@@ -33,10 +32,9 @@ def settings_dialog():
 
     def save_config():
         config = utils.get_config()
-        config["image_field"] = text_query.text()
-        config["query_field"] = text_image.text()
+        config["query_field"] = text_query.text()
+        config["image_field"] = text_image.text()
         mw.addonManager.writeConfig(__name__, config)
-
         dialog.close()
 
     def layout_everything():
@@ -55,10 +53,10 @@ def settings_dialog():
 
     layout_everything()
 
-    dialog.exec_()
+    dialog.exec()
 
 
 def init_menu():
-    action = QAction("Anki Image Search v2 settings", mw)
+    action = QAction("Anki Image Search vDuck settings", mw)
     qconnect(action.triggered, settings_dialog)
     mw.form.menuTools.addAction(action)

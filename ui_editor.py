@@ -1,48 +1,53 @@
-from aqt import mw
+import os
+import sys
+
 from anki.hooks import addHook
 
 from . import utils
-from . import search
+folder = os.path.dirname(__file__)
+lib_folder = os.path.join(folder, "src", "vendor")
+sys.path.insert(0, lib_folder)
 
+from duckduckgo_search import ddg_images
+
+cached_results = {}
+position = 0
 
 def display_image(editor, img_filename, image_dest_field):
     img_tag = utils.image_tag(img_filename)
-
     editor.note.fields[image_dest_field] = img_tag
     editor.loadNote()
 
 
-def search_image(editor):
+def search_image(editor, use_cache=False):
     query = utils.get_note_query(editor.note)
-    image_url = search.get_result_by_query(query)
-    if not image_url:
+    if not use_cache:
+        search_image.cached_results = ddg_images(query)
+        search_image.position = 0
+    if cached_results is None:
         utils.report("Couldn't find images for query '{}' :(".format(query))
-
-    filename = utils.save_image_to_library(editor, image_url)
-    if not filename:
-        return
-
-    display_image(editor, filename, utils.get_note_image_field_index(editor.note))
+    else:
+        image_url = search_image.cached_results[search_image.position]["image"]
+        filename = utils.save_file_to_library(editor, image_url)
+        display_image(editor, filename, utils.get_note_image_field_index(editor.note))
 
 
 def prev_image(editor):
-    query = utils.get_note_query(editor.note)
-    image_url = search.get_prev_result_by_query(query)
-    filename = utils.save_image_to_library(editor, image_url)
-    if not filename:
-        return
-
-    display_image(editor, filename, utils.get_note_image_field_index(editor.note))
+    if search_image.cached_results is None:
+        search_image(editor, use_cache=False)
+    if search_image.position == 0:
+        search_image.position = len(search_image.cached_results) - 1
+    search_image.position = search_image.position - 1
+    search_image(editor, use_cache=True)
 
 
 def next_image(editor):
-    query = utils.get_note_query(editor.note)
-    image_url = search.get_next_result_by_query(query)
-    filename = utils.save_image_to_library(editor, image_url)
-    if not filename:
-        return
-
-    display_image(editor, filename, utils.get_note_image_field_index(editor.note))
+    if search_image.cached_results is None:
+        search_image(editor, use_cache=False)
+    if search_image.position == len(search_image.cached_results) - 1:
+        search_image.position = 0
+    search_image.position = search_image.position + 1
+    search_image(editor, use_cache=True)
 
 
 def hook_image_buttons(buttons, editor):

@@ -1,41 +1,35 @@
-# Anki Image Search v2 Addon
-Basically scraps Yandex Images Search and places them on your card.
+# Anki Image Search vDuck Addon
+Retrieves images using https://duckduckgo.com/ and inserts them into the card.
+
 This only works for Anki 2.1.54+
 
-Forked from https://ankiweb.net/shared/info/885589449, https://github.com/haoxuany/anki_image_search
+Forked from https://github.com/nerevar/anki_image_search_v2
 
-## Installation
+## How to use
+Once the addon has been installed you will need to configure the fields that you want to use for the image search and the field you want the image to go in to.
 
-You can now install this addon by simply copying the add-on code `432495333` into Anki (under Tools → Add-ons → Get Add-ons). You no longer need to download anything manually!
+Click on tools -> Add-ons -> Anki Image Search vDuck settings
 
-More details here: https://ankiweb.net/shared/info/432495333
+![Example](./images/settings_example.png)
 
-## How
-On the card editor (from either the "Add" or "Browse" dialog), there are three buttons added on the upper right portion of the editor: **Search Image**, **Previous Image** and **Next Image**.
+Enter the fields you want to use for a search term (Query Field) and the field you want the image to go in to. Shown below. (Note these will be different for your cards)
 
-Basically just type in your search query in the field with name "English" in the card, and use those buttons. The image will be inserted/updated in the field "Image".
+![Example](./images/settings_example2.png)
+
+Then when you are creating a card you can click on the image search button, it will search for images and insert them into the field you specified.
 
 ![Example](./images/example.png)
 
-Also you can change field names in settings:
 
-![Settings](./images/settings.png)
-
-Yandex Image Search provide good results for English or Russian queries, other languages have not been tested.
-
-You can track the project on [github](https://github.com/nerevar/anki_image_search_v2).
-
+You can track the project on [github](https://github.com/kit-nya/anki_image_search_vduck/).
+If you find any bugs, please open an issue on github.
 ## License
-
-None of this would be possible without Yandex Images. Even though technically I'm scrapping Yandex Images unofficial API which I found on [this github repo](https://github.com/rauschmerscen/yandex-pictures/blob/5a36786d88dbbd30cda123aab525039216c316ff/src/utils/create-url.js#L22).
 
 The icons are provided by [Open Iconic](https://useiconic.com/open). Open Iconic is licensed under MIT.
 
-This project is under [GPLv2](./LICENSE).
+This project is licensed is under [GPLv2](./LICENSE).
+
+This project relies on and is bundled with [duckduckgo-search](https://pypi.org/project/duckduckgo-search/) which is provided under an MIT license.
 
 ## Why
-The main reason I did that, is to make learning other languages more comfortable for me (and others) because original [Image Search](https://ankiweb.net/shared/info/885589449) addon, which uses Google Images Search, looked abandoned and didn't work.
-And, of course, because of 2 free evennings :)
-
-Also, I agree with original author of addon: he writes, that he knows just how important it is to be able to point at pictures and recall words without going through a translation phase. He got annoyed doing it by hand at around 20 cards.
-
+I don't like Yandex. Gotta show Ukrainians some love.
