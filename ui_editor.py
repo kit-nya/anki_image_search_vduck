@@ -29,7 +29,8 @@ def search_image(editor, use_cache=False):
     else:
         image_url = search_image.cached_results[search_image.position]["image"]
         filename = utils.save_file_to_library(editor, image_url)
-        display_image(editor, filename, utils.get_note_image_field_index(editor.note))
+        if filename is not None:
+            display_image(editor, filename, utils.get_note_image_field_index(editor.note))
 
 
 def prev_image(editor):

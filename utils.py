@@ -32,9 +32,16 @@ def get_note_image_field_index(note):
 
 def save_file_to_library(editor, image_url):
     # Set a user agent to avoid 403 errors
-    headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/112.0"}
-    response = requests.get(image_url, headers=headers)
-    # Get file type from response
+    try:
+        headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/112.0"}
+        response = requests.get(image_url, headers=headers, timeout=5)
+        if response.status_code != 200:
+            report("Couldn't download image from URL '{}' :(".format(image_url))
+            return None
+        # Get file type from response
+    except requests.exceptions.RequestException as e:
+        report("Couldn't download image from URL '{}' :(".format(image_url))
+        return None
     file_extension = response.headers["Content-Type"].split("/")[-1]
     (i_file, temp_path) = mkstemp(prefix=str(uuid4()), suffix=file_extension)
     os.write(i_file, response.content)
