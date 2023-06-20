@@ -8,6 +8,7 @@ folder = os.path.dirname(__file__)
 lib_folder = os.path.join(folder, "src", "vendor")
 sys.path.insert(0, lib_folder)
 
+
 from duckduckgo_search import ddg_images
 
 cached_results = {}
